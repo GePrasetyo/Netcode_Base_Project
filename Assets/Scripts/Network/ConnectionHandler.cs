@@ -33,6 +33,10 @@ public class ConnectionHandler : NetworkDiscovery<DiscoveryBroadcastData, Discov
             ConnectionShutdown?.Invoke();
             StopDiscovery();
         }
+        else
+        {
+            Debug.Log($"Somone Disconnected {clientId}");
+        }
     }
 
     private void OnServerStart()
