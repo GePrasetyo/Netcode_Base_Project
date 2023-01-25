@@ -7,8 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(NetworkManager))]
 public class ConnectionHandler : NetworkDiscovery<DiscoveryBroadcastData, DiscoveryResponseData>
 {
-    public Action ConnectionEstablished;
-    public Action ConnectionShutdown;
+    public static event Action ConnectionEstablished;
+    public static event Action ConnectionShutdown;
     private NetworkManager netManager;
     public static event Action<IPEndPoint, DiscoveryResponseData> OnServerFound;
 

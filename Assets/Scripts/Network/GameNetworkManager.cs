@@ -22,22 +22,32 @@ public class GameNetworkManager : MonoBehaviour, IGameService {
 
     private void Start()
     {
-        connectionHandler.ConnectionEstablished += OnGameConnected;
-        connectionHandler.ConnectionShutdown += OnShutdown;
+        ConnectionHandler.ConnectionEstablished += OnGameConnected;
+        ConnectionHandler.ConnectionShutdown += OnShutdown;
+        netManager.ConnectionApprovalCallback += ApprovalCheck;
     }
 
     private void OnDestroy()
     {
         ServiceLocator.RemoveService(this.GetType());
-        connectionHandler.ConnectionEstablished -= OnGameConnected;
-        connectionHandler.ConnectionShutdown -= OnShutdown;
+        ConnectionHandler.ConnectionEstablished -= OnGameConnected;
+        ConnectionHandler.ConnectionShutdown -= OnShutdown;
+        netManager.ConnectionApprovalCallback -= ApprovalCheck;
     }
 
     public void StartAHost(string roomName = "")
     {
-        NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
         new SessionState(roomName);
-        NetworkManager.Singleton.StartHost();
+
+        var payload = JsonUtility.ToJson(new ConnectionPayload()
+        {
+            playerName = GameInstance.myName,
+        });
+        var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
+        netManager.NetworkConfig.ConnectionData = payloadBytes;
+        netManager.NetworkConfig.ClientConnectionBufferTimeout = _timeoutDuration;
+
+        netManager.StartHost();
         connectingSession?.Invoke();
     }
 
@@ -46,9 +56,9 @@ public class GameNetworkManager : MonoBehaviour, IGameService {
         connectingSession?.Invoke();
 
         var chosenTransport = netManager.GetComponent<Unity.Netcode.Transports.UTP.UnityTransport>();
-        chosenTransport.ConnectionData.Address = ip;
-        chosenTransport.ConnectionData.Port = port;
+        chosenTransport.SetConnectionData(ip, port, "0.0.0.0");
 
+        Debug.Log($"Connecting to{ip}:{port}");
         var payload = JsonUtility.ToJson(new ConnectionPayload() {
             playerName = GameInstance.myName,
         });
@@ -83,19 +93,20 @@ public class GameNetworkManager : MonoBehaviour, IGameService {
 
     private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        Debug.Log("Someone wants approval!");
         var clientID = request.ClientNetworkId;
         var connectionData = request.Payload;
 
         var approvalMaxPlayer = request.Payload.Length <= maxConnectPayload;
+        Debug.Log($"Someone wants approval : {approvalMaxPlayer}");
         if (!approvalMaxPlayer)
         {
+            response.CreatePlayerObject = false;
             response.Approved = false;
             return;
         }
 
         response.Approved = approvalMaxPlayer;
-        response.CreatePlayerObject = approvalMaxPlayer;
+        response.CreatePlayerObject = true;
 
         var payload = System.Text.Encoding.UTF8.GetString(connectionData);
         var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload);

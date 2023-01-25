@@ -26,19 +26,30 @@ public class GameMenuWidget : MonoBehaviour
         stopButton.onClick.AddListener(OnStopFindClicked);
 
         nameField.onEndEdit.AddListener((string name) => GameInstance.myName = name);
+
+        ConnectionHandler.ConnectionEstablished += GameConnected;
+        ConnectionHandler.ConnectionShutdown += GameDisConnected;
     }
 
-    private void OnEnable() {
-        ConnectionHandler.OnServerFound += OnSessionFound;
+    private void OnDestroy()
+    {
+        ConnectionHandler.ConnectionEstablished -= GameConnected;
+        ConnectionHandler.ConnectionShutdown -= GameDisConnected;
     }
 
-    private void OnDisable() {
-        ConnectionHandler.OnServerFound -= OnSessionFound;
+    private void GameConnected()
+    {
+        gameObject.SetActive(false);
+    }
+
+    private void GameDisConnected()
+    {
+        gameObject.SetActive(true);
     }
 
     private void OnSessionFound(System.Net.IPEndPoint sender, DiscoveryResponseData response) {
         discoveredServers[sender.Address] = response;
-        Debug.Log($"Name : {response.ServerName} - Port : {response.Port}");
+        Debug.Log($"Name : {response.ServerName} - Address : {sender.Address} - Port : {response.Port}");
 
         foreach (var iSession in sessionItems) {
             Destroy(iSession.gameObject);
@@ -59,12 +70,17 @@ public class GameMenuWidget : MonoBehaviour
     private void OnFindClicked() {
         findButton.gameObject.SetActive(false);
         stopButton.gameObject.SetActive(true);
+        discoveredServers.Clear();
+
+        ConnectionHandler.OnServerFound += OnSessionFound;
         ServiceLocator.Resolve<GameNetworkManager>().FindLocalSession();
     }
 
     private void OnStopFindClicked() {
         findButton.gameObject.SetActive(true);
         stopButton.gameObject.SetActive(false);
+
+        ConnectionHandler.OnServerFound -= OnSessionFound;
         ServiceLocator.Resolve<GameNetworkManager>().StopSearchSession();
     }
 }

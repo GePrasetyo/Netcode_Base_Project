@@ -1,15 +1,17 @@
 using UnityEngine;
 using Unity.Netcode;
+using Unity.Collections;
 
 public class PlayerState : NetworkBehaviour
 {
     public NetworkVariable<float> hitPoint = new NetworkVariable<float>();
     public NetworkVariable<float> energy = new NetworkVariable<float>();
-    public NetworkVariable<string> playerName = new NetworkVariable<string>();
+    public NetworkVariable<FixedString32Bytes> playerName = new NetworkVariable<FixedString32Bytes>();
 
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
+
     }
 
     public override void OnNetworkDespawn()
