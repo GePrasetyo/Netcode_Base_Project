@@ -11,12 +11,24 @@ public class PlayerState : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-
     }
 
     public override void OnNetworkDespawn()
     {
         base.OnNetworkDespawn();
+    }
+
+    private void Update() {
+
+        if (!IsLocalPlayer)
+            return;
+
+        if (Input.GetKey(KeyCode.W)) {
+            transform.Translate(Vector3.forward * 1f * Time.deltaTime);
+        }
+        else if (Input.GetKey(KeyCode.S)) {
+            transform.Translate(Vector3.back * 1f * Time.deltaTime);
+        }
     }
 }
 
