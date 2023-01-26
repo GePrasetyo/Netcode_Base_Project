@@ -25,6 +25,8 @@ public class GameNetworkManager : MonoBehaviour, IGameService {
         ConnectionHandler.ConnectionEstablished += OnGameConnected;
         ConnectionHandler.ConnectionShutdown += OnShutdown;
         netManager.ConnectionApprovalCallback += ApprovalCheck;
+
+        Invoke("StartAHost", 5f);
     }
 
     private void OnDestroy()
@@ -35,7 +37,7 @@ public class GameNetworkManager : MonoBehaviour, IGameService {
         netManager.ConnectionApprovalCallback -= ApprovalCheck;
     }
 
-    public void StartAHost(string roomName = "")
+    public void StartAHost(string roomName = "aswdewas")
     {
         new SessionState(roomName);
 

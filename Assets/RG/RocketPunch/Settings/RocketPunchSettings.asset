@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72639767fe7c4dceb77f19644403dfd2, type: 3}
+  m_Name: RocketPunchSettings
+  m_EditorClassIdentifier: 
+  mainMenuPrefab: {fileID: 8531386806461087745, guid: 28c8c89a5d4050648a27b427bcb470c1, type: 3}
+  mainMenuUIPrefab: {fileID: 8362903274682704510, guid: 1be851d268835b045aedb2a7a2bb8dad, type: 3}
+  xrOriginPrefab: {fileID: 4625627310139450093, guid: 712efc0416a51df4f95fb7472c28d47b, type: 3}
+  mechPrefab: {fileID: 7962095714014658504, guid: 35594d111f810b14c9077b1cbea6a24a, type: 3}
+  mechSettings: {fileID: 11400000, guid: df6cc2134b9acf94fba64b9f3f8ef8bb, type: 2}
+  networkManagerPrefab: {fileID: 670849706560337729, guid: c79d76aaa1bee8f4ab32ee46367d94bc, type: 3}
